@@ -1,0 +1,19 @@
+
+###########################################################################################
+#
+# NASM assembler setup
+#
+
+# installed path
+NASM_PATH = "C:\\Program Files\\NASM" ;
+NASM_BIN = "$(NASM_PATH)\\nasm.exe" ;
+
+# use nasm for the assembler
+AS = $(NASM_BIN) ;
+ASFLAGS = -g -f win64 ;
+
+# the standard unix version, quote executable which has spaces
+actions As
+{
+    "$(AS)" $(ASFLAGS) -I$(HDRS) -o $(<) $(>)
+}

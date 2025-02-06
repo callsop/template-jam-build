@@ -1,0 +1,41 @@
+###########################################################################################
+#
+# microsoft visual studio 2022
+#
+
+VS2022 = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.42.34433" ;
+
+###########################################################################################
+#
+# microsoft linker defaults
+#
+
+LINK = "$(VS2022)\\bin\\Hostx64\\x64\\link.exe" ;
+LINKFLAGS += /nologo /subsystem:console /machine:X64 ;
+LINKPATH += "$(VS2022)\\lib\\x64" ;
+
+# as the library paths have spaces, use an environment variable and quote executable
+actions Link bind NEEDLIBS
+{
+    set LIBPATH= /libpath:"$(LINKPATH)"
+    "$(LINK)" /DEBUG /out:$(<) $(LINKFLAGS) $(UNDEFS) %LIBPATH% $(LINKLIBS) $(NEEDLIBS) $(>)
+}
+
+###########################################################################################
+#
+# c++ defaults
+#
+
+C++FLAGS = /nologo /FS /Gd /Zi /std:c++20 /W3 /EHsc ;
+C++FLAGS on debug = $(C++FLAGS) /MDd /Od ;
+C++FLAGS on release = $(C++FLAGS) /MD /O2 ;
+
+C++ = "$(VS2022)\\bin\\Hostx64\\x64\\cl.exe" ;
+INCLUDE += $(VS2022)\\include ;
+ 
+# as the include paths have spaces, use an environment variable and quote executable
+actions C++
+{
+    set INCL= /I"$(INCLUDE)"
+    "$(C++)" /c /Fo$(<) /Fd$(<:S=.pdb) $(C++FLAGS) %INCL% $(CCDEFS) $(CCHDRS) $(>)
+}

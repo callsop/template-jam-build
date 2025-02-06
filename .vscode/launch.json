@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug hello_asm",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/debug/hello_asm.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build/debug",
+      "console": "integratedTerminal", // options: integratedTerminal (VS Code Terminal), internalTerminal (reuse same console window), externalTerminal (new console window each time)
+      "symbolSearchPath": "srv*c:\\symbols*http://msdl.microsoft.com/download/symbols",
+      "preLaunchTask": "Build asm Project"
+    },
+    {
+      "name": "Debug hello_cpp",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/debug/hello_cpp.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build/debug",
+      "console": "integratedTerminal", // options: integratedTerminal (VS Code Terminal), internalTerminal (reuse same console window), externalTerminal (new console window each time)
+      "symbolSearchPath": "srv*c:\\symbols*http://msdl.microsoft.com/download/symbols",
+      "preLaunchTask": "Build cpp Project"
+    }
+  ]
+}

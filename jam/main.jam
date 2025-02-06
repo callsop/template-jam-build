@@ -1,0 +1,75 @@
+#
+# start with no values
+#
+LINKLIBS = ;
+LINKFLAGS = ;
+
+#
+# build targetname from sources using 'cfg' environment
+#
+# called with: on X BuildMain X : targetname : srcs
+#
+# assumed varaibles:
+#   LOCATE_TARGET       - directory for outputs
+#
+rule BuildMain cfg : targetname : srcs
+{
+    # set sources grist based on config
+    local SOURCE_GRIST = $(cfg) ;
+
+    # config specific target to build
+    local target = [ FGristFiles $(targetname) ] ;
+
+    # build target from the sources
+    Main $(target) : $(srcs:BS) ;
+
+    # create phony target 
+    Depends $(cfg) $(target:B) : $(target) ;
+    NotFile $(target:B) ;
+
+    # some extra left overs from linker
+    local extras = [ FGristFiles $(targetname:S=.ilk) ] ;
+
+    # add pdb file for each source (cpp) clean doesn't care if not exist
+    extras += [ FGristFiles $(srcs:BS=.pdb) ] ;
+    MakeLocate $(extras) : $(LOCATE_TARGET) ;
+    Clean clean : $(extras) ;
+}
+
+rule ConfigMain cfgs : targetname : srcs
+{
+    ForEachConfig $(cfgs) : BuildMain $(targetname) : $(srcs) ;
+}
+
+#
+# override standard link rule as it should set LINKFLAGS/LINKLIBS on target
+#
+rule Link
+{
+    MODE on $(<) = $(EXEMODE) ;
+    Chmod $(<) ;
+
+    local _t = [ FAppendSuffix $(<) : $(SUFEXE) ] ;
+
+    # propagate settings
+    LINKFLAGS on $(_t) = $(LINKFLAGS) $(SUBDIRLINKFLAGS) ;
+    LINKLIBS on $(_t) = $(LINKLIBS) $(SUBDIRLINKLIBS) ;
+}
+
+#
+# add additional link flags until next subdir
+#
+rule SubDirLinkFlags $(<)
+{
+    SUBDIRLINKFLAGS += $(<) ;
+}
+
+#
+# add additional link libraries until next subdir
+#
+rule SubDirLinkLibs $(<)
+{
+    SUBDIRLINKLIBS += $(<) ;
+}
+
+SUBDIRRESET += LINKFLAGS LINKLIBS ;

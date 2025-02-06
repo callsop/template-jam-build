@@ -1,0 +1,41 @@
+#################################################################
+# build hello_cpp
+#################################################################
+
+SubDir TOP ;
+
+# locate output targets here
+LOCATE_TARGET on debug = [ FDirName $(SUBDIR) build debug ] ;
+LOCATE_TARGET on release = [ FDirName $(SUBDIR) build release ] ;
+
+# set where the sources are located (or comment out for top)
+SEARCH_SOURCE = src ;
+
+# collect the sources
+SRCS = [ Glob [ FDirName $(SUBDIR) $(SEARCH_SOURCE) ] : *.cpp ] ;
+
+SubDirLinkLibs kernel32.lib ;
+
+# build main debug/release versions
+ConfigMain debug release : hello_cpp : $(SRCS) ;
+
+#################################################################
+# build hello_asm (Normally would have its own directory)
+#
+# To include assembly in c++ projects, just remove this section
+# and add *.asm to sources above.
+#################################################################
+
+SubDir TOP ;
+
+# set where the sources are located (or comment out for top)
+SEARCH_SOURCE = src ;
+
+# set entry point for assembly file
+SubDirLinkFlags /entry:Start ;
+
+# collect assembly sources
+SRCS = [ Glob [ FDirName $(SUBDIR) $(SEARCH_SOURCE) ] : *.asm ] ;
+
+# build main debug/release versions
+ConfigMain debug release : hello_asm : $(SRCS) ;

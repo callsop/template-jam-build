@@ -1,0 +1,5 @@
+include jam/utils.jam ;
+include jam/main.jam ;
+include jam/vs2022.jam ;
+include jam/mssdk10.jam ;
+include jam/nasm.jam ;

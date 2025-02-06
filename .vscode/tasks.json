@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build asm Project",
+            "type": "shell",
+            "command": "jam.exe",
+            "args": [
+                "-j4",
+                "hello_asm"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Build the project using jam"
+        },
+        {
+            "label": "Build cpp Project",
+            "type": "shell",
+            "command": "jam.exe",
+            "args": [
+                "-j4",
+                "hello_cpp"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Build the project using jam"
+        }
+    ]
+}

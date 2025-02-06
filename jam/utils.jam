@@ -1,0 +1,31 @@
+
+#
+# Call rul for each configuration.
+#
+# e.g. ForEachConfig debug release : Main main : $(srcs) ;
+#
+rule ForEachConfig cfg : rul
+{
+    local c ;
+    for c in $(cfg)
+    {
+        NotFile $(c) ;
+        on $(c) $(rul[1]) $(c) : $(rul[2]) : $(3) : $(4) : $(5) ;
+    }
+}
+
+#
+# Print contents of each var.
+#
+# EchoVar var var var ;
+#
+rule EchoVar vars
+{
+    local f ;
+    for v in $(vars)
+    {
+        Echo $(v) \= $($(v)) ;
+    }
+}
+
+
