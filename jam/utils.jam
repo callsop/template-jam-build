@@ -1,3 +1,7 @@
+SPEACE = " " ;
+NEWLINE = "
+" ;
+
 
 #
 # Call rul for each configuration.
@@ -28,4 +32,39 @@ rule EchoVar vars
     }
 }
 
+#
+# Exists f - is true if 'f' exists.
+#
+rule Exists
+{
+    local p = <checked>$(<:P) ;
 
+    if ! $($(p))
+    {
+        local files = [ Glob $(<:P) : * ] ;
+        $(p) = $(files:BS) ;
+    }
+
+    if $(<:BS) in $($(p))
+    {
+        return 1 ;
+    }
+
+    return ;
+}
+
+#
+# Exclude these : fromThis - excludes first list from second list ;
+#
+rule Exclude
+{
+    local i result ;
+    for i in $(2)
+    {
+        if ! ( $(i) in $(1) )
+        {
+            result += $(i) ;
+        }
+    }
+    return $(result) ;
+}

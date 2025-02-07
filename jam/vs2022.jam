@@ -3,7 +3,12 @@
 # microsoft visual studio 2022
 #
 
-VS2022 = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.42.34433" ;
+VS2022 = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433" ;
+
+if ! [ Exists $(VS2022) ]
+{
+    Exit "Microsoft Visual Studio not found, please install and/or set VS2022 to installed path in vs2022.jam." ;
+}
 
 ###########################################################################################
 #
