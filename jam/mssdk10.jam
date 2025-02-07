@@ -1,10 +1,10 @@
 
 ###########################################################################################
 #
-# Microsoft SDK v10
+# Microsoft SDK v10/11
 #
 
-# windows sdk v10 path
+# windows sdk v10/11 path
 WINSDK = "C:\\Program Files (x86)\\Windows Kits\\10" ;
 
 if ! [ Exists $(WINSDK) ]
@@ -13,26 +13,29 @@ if ! [ Exists $(WINSDK) ]
     Exit "Please install and/or set WINSDK to installed path in mssdk10.jam." ;
 }
 
-# specific version
-WINSDK_VER = 10.0.22621.0 ;
+# uncomment this to use a specific version:
+# WINSDK_VER = 10.0.22621.0 ;
+
+# not set try to find a version
+if ! $(WINSDK_VER) 
+{
+    local versions = [ Glob $(WINSDK)\\Lib\\ : * ] ;
+    versions = [ Reverse [ Exclude . .. : $(versions:BS) ] ] ;
+    if $(versions)
+    {
+
+        WINSDK_VER = $(versions[1]) ;
+        #Echo Using Windows SDK Ver: $(WINSDK_VER) ;
+    }
+}
 
 WINSDK_LIB = $(WINSDK)\\Lib\\$(WINSDK_VER) ;
 WINSDK_INC = $(WINSDK)\\Include\\$(WINSDK_VER)\\ucrt ;
 
 if ! [ Exists $(WINSDK_LIB) ]
 {
-    Echo "Microsoft SDK v10 version not found: $(WINSDK_VER)." ;
-    local versions = [ Glob $(WINSDK)\\Lib\\ : * ] ;
-    versions = [ Exclude . .. : $(versions:BS) ] ;
-    if $(versions)
-    {
-        Echo "" "> Found version: "$(versions:BS)$(NEWLINE) ;
-        Exit "Please set WINSDK_VER to desired version in mssdk10.jam." ;
-    }
-    else
-    {
-        Exit "Please install and/or set WINSDK to installed path in mssdk10.jam." ;
-    }
+    Echo "Microsoft SDK v10 not found at: $(WINSDK_LIB)." ;
+    Exit "Please install and/or set WINSDK to installed path in mssdk10.jam." ;
 }
 
 

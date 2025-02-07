@@ -3,12 +3,36 @@
 # microsoft visual studio 2022
 #
 
-VS2022 = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433" ;
+VS2022 = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC" ;
 
 if ! [ Exists $(VS2022) ]
 {
     Exit "Microsoft Visual Studio not found, please install and/or set VS2022 to installed path in vs2022.jam." ;
 }
+
+# uncomment this to use a specific version:
+# VS2022_VER = 14.42.34433 ;
+
+# not set try to find a version
+if ! $(VS2022_VER) 
+{
+    local versions = [ Glob $(VS2022)\\ : * ] ;
+    versions = [ Reverse [ Exclude . .. : $(versions:BS) ] ] ;
+    if $(versions)
+    {
+
+        VS2022_VER = $(versions[1]) ;
+        #Echo Using Visual Studio Ver: $(VS2022_VER) ;
+    }
+}
+
+VS2022 = $(VS022)\\$(VS2022_VER) ;
+
+if ! [ Exists $(VS2022) ]
+{
+    Exit "Microsoft Visual Studio not found, please install and/or set VS2022 to installed path in vs2022.jam." ;
+}
+
 
 ###########################################################################################
 #

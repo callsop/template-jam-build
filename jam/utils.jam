@@ -54,7 +54,7 @@ rule Exists
 }
 
 #
-# Exclude these : fromThis - excludes first list from second list ;
+# Exclude these : fromThis - excludes first list from second list
 #
 rule Exclude
 {
@@ -67,4 +67,17 @@ rule Exclude
         }
     }
     return $(result) ;
+}
+
+#
+# Reverse list - reverses list elements
+#
+rule Reverse
+{
+	local result ;
+	for i in $(<)
+	{
+		result = $(i) $(result) ;
+	}
+	return $(result) ;
 }
