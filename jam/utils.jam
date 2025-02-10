@@ -39,6 +39,11 @@ rule Exists
 {
     local p = <checked>$(<:P) ;
 
+    if $(VERBOSE) >= 5
+    {
+        EchoVar p ;
+    }
+
     if ! $($(p))
     {
         local files = [ Glob $(<:P) : * ] ;
@@ -47,6 +52,10 @@ rule Exists
 
     if $(<:BS) in $($(p))
     {
+        if $(VERBOSE) >= 5
+        {
+            Echo Found $(<:BS) ;
+        }
         return 1 ;
     }
 

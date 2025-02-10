@@ -1,46 +1,60 @@
 ###########################################################################################
 #
-# microsoft visual studio 2022
+# microsoft visual studio
 #
 
-VS2022 = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC" ;
+VS = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC" ;
 
-if ! [ Exists $(VS2022) ]
+rule CheckVS
 {
-    Exit "Microsoft Visual Studio not found, please install and/or set VS2022 to installed path in vs2022.jam." ;
-}
-
-# uncomment this to use a specific version:
-# VS2022_VER = 14.42.34433 ;
-
-# not set try to find a version
-if ! $(VS2022_VER) 
-{
-    local versions = [ Glob $(VS2022)\\ : * ] ;
-    versions = [ Reverse [ Exclude . .. : $(versions:BS) ] ] ;
-    if $(versions)
+    local check = $(>:E=$(VS)) ;
+    if ! [ Exists $(check) ]
     {
-
-        VS2022_VER = $(versions[1]) ;
-        #Echo Using Visual Studio Ver: $(VS2022_VER) ;
+        Echo "Microsoft Visual Studio $(<) not found at:" ;
+        Echo $(check) ;
+        Exit "Please install and/or set VS to path of Visual Studio MSVC directory in vs.jam." ;
+    }
+    else 
+    {
+        if $(<) && $(VERBOSE)
+        {
+            Echo Using $(<) at $(check) ;
+        }
     }
 }
 
-VS2022 = $(VS2022)\\$(VS2022_VER) ;
+CheckVS ;
 
-if ! [ Exists $(VS2022) ]
+# uncomment this to use a specific version:
+# VS_VER = 14.42.34433 ;
+
+# not set try to find a version
+if ! $(VS_VER) 
 {
-    Exit "Microsoft Visual Studio not found, please install and/or set VS2022 to installed path in vs2022.jam." ;
+    local versions = [ Glob $(VS)\\ : * ] ;
+    versions = [ Reverse [ Exclude . .. : $(versions:BS) ] ] ;
+    if $(versions)
+    {
+        VS_VER = $(versions[1]) ;
+        if $(VERBOSE)
+        {
+            Echo Using Visual Studio Ver: $(VS_VER) ;
+        }
+    }
 }
+
+VS = $(VS)\\$(VS_VER) ;
+
+CheckVS ;
 
 ###########################################################################################
 #
 # microsoft linker defaults
 #
 
-LINK = "$(VS2022)\\bin\\Hostx64\\x64\\link.exe" ;
+LINK = "$(VS)\\bin\\Hostx64\\x64\\link.exe" ;
 LINKFLAGS += /nologo /subsystem:console /machine:X64 ;
-LINKPATH += "$(VS2022)\\lib\\x64" ;
+LINKPATH += "$(VS)\\lib\\x64" ;
 
 # as the library paths have spaces, use an environment variable and quote executable
 actions Link bind NEEDLIBS
@@ -58,8 +72,8 @@ C++FLAGS = /nologo /FS /Gd /Zi /std:c++20 /W3 /EHsc ;
 C++FLAGS on debug = $(C++FLAGS) /MDd /Od ;
 C++FLAGS on release = $(C++FLAGS) /MD /O2 ;
 
-C++ = "$(VS2022)\\bin\\Hostx64\\x64\\cl.exe" ;
-INCLUDE += $(VS2022)\\include ;
+C++ = "$(VS)\\bin\\Hostx64\\x64\\cl.exe" ;
+INCLUDE += $(VS)\\include ;
  
 # as the include paths have spaces, use an environment variable and quote executable
 actions C++
@@ -67,3 +81,6 @@ actions C++
     set INCL= /I"$(INCLUDE)"
     "$(C++)" /c /Fo$(<) /Fd$(<:S=.pdb) $(C++FLAGS) %INCL% $(CCDEFS) $(CCHDRS) $(>)
 }
+
+CheckVS cl.exe : $(C++) ;
+CheckVS link.exe : $(LINK) ;

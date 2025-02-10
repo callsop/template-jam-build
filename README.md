@@ -149,9 +149,9 @@ please let me know.
 
 Why the `SET MSVCNT=1`? 
 
-Historically, to use Jam with Visual Studio you would set this to
+Historically, to use Jam with Visual Studio you would set MSVCNT to
 the directory of Visual Studio, however it contains spaces in the path and the supplied
-actions don't support this. So instead, I have put the path for VS2022 in `jam/vs2022.jam`
+actions don't support this. So instead, I have put the path for VS in `jam/vs.jam`
 where you can change this if it's different or have newer version. The C++ and Link actions
 were updated here too to support the 'spaces in path' issue.
 

@@ -25,7 +25,10 @@ if ! $(WINSDK_VER)
     {
 
         WINSDK_VER = $(versions[1]) ;
-        #Echo Using Windows SDK Ver: $(WINSDK_VER) ;
+        if $(VERBOSE)
+        {
+            Echo Using Windows SDK Ver: $(WINSDK_VER) ;
+        }
     }
 }
 
