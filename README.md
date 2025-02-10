@@ -12,36 +12,57 @@ If one or the other isn't required, just delete that source file.
 > customized it to support 10s of thousands of targets, however the stock version is simple
 > and still useful if you know how it works.
 
-> [!WARNING]
-> Performing syscalls like this is just for demonstration, use it at your own risk, new
-> versions of Windows may change these syscalls so prefer to call these functions in ntdll.dll.
-
 ## Requirements
 
 1. Install Jam 2.5.
 
 2. Install Visual Studio 2022 Community.
+   - Check 'Desktop development with C++' and:
+     - MSVC v143 - VS 2022 C++ x64/x86 build tools
+     - Windows 11 SDK
+     - C++ CMake tools for Windows
+     - Testing tools core features - Build tools
+     - C++ Address Sanitizer
 
-3. Install NASM 2.16.03. Required for building assembly files.
-
-4. Install Visual Studio Code. For editing/debugging in Visual Studio Code.
+3. Install Visual Studio Code. For editing/debugging in Visual Studio Code.
 
    Follow the steps 1 to 3 from the prerequisites here:
    https://code.visualstudio.com/docs/cpp/config-msvc#_prerequisites
 
+The following are required for compiling/debugging assembly:
 
-5. Install 'Asm Code Lens' (maziac). For formatting, intellisense on assembly files.
+4. Install NASM 2.16. 
 
-## Debugging in VSCode
+5. In VSCode/Extensions: Install [Asm Code Lens](https://marketplace.visualstudio.com/items?itemName=maziac.asm-code-lens)
+(by maziac). For formatting, intellisense on assembly files.
+
+## Debugging C++ in VSCode
 
 After cloning the source, launch VSCode from cmd window with 'e.bat'.
 
-Open hello_asm.asm and place breakpoints with F9 in the source:
+Open `hello_cpp.cpp` and place breakpoints with F9 in the source:
+
+![](assets/preview4.png)
+
+Go to the debug tab (left) in Visual Studio Code and choose from the drop down and choose desired
+executable to debug 'Debug hello_cpp':
+
+![](assets/preview5.png)
+
+Press F5 to compile and debug the application, which should write the hello world message to the
+terminal.
+
+![](assets/preview6.png)
+
+
+## Debugging Assembly in VSCode
+
+Open `hello_asm.asm` and place breakpoints with F9 in the source:
 
 ![](assets/preview1.png)
 
 Go to the debug tab (left) in Visual Studio Code and choose from the drop down and choose desired
-executable to debug 'Debug hello_asm' or 'Debug hello_cpp':
+executable to debug 'Debug hello_asm':
 
 ![](assets/preview2.png)
 
@@ -50,6 +71,10 @@ NtWriteFile, which should write the hello world message to the terminal. This fu
 'message' to the standard output handle provided by the os to console apps:
 
 ![](assets/preview3.png)
+
+> [!WARNING]
+> Performing syscalls like this is just for demonstration, use it at your own risk, new
+> versions of Windows may change these syscalls so prefer to call these functions in ntdll.dll.
 
 ## Command Line Compiling
 
@@ -124,9 +149,13 @@ please let me know.
 
 Why the `SET MSVCNT=1`? 
 
-Historically, to use Jam with Visual Studio you would set this to
+Historically, to use Jam with Visual Studio you would set MSVCNT to
 the directory of Visual Studio, however it contains spaces in the path and the supplied
-actions don't support this. So instead, I have put the path for VS2022 in `jam/vs2022.jam`
+actions don't support this. So instead, I have put the path for VS in `jam/vs.jam`
 where you can change this if it's different or have newer version. The C++ and Link actions
 were updated here too to support the 'spaces in path' issue.
 
+### Can't set breakpoints?
+
+If you can't set breakpoints you may need to enable the following option in File -> Preferences -> Settings -> search for and enable:
+> debug.allowBreakpointsEverywhere

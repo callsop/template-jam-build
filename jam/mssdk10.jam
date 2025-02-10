@@ -1,17 +1,46 @@
 
 ###########################################################################################
 #
-# Microsoft SDK v10
+# Microsoft SDK v10/11
 #
 
-# windows sdk v10 path
+# windows sdk v10/11 path
 WINSDK = "C:\\Program Files (x86)\\Windows Kits\\10" ;
 
-# specific version
-WINSDK_VER = 10.0.22000.0 ;
+if ! [ Exists $(WINSDK) ]
+{
+    Echo "Microsoft SDK v10 not found at: $(WINSDK)." ;
+    Exit "Please install and/or set WINSDK to installed path in mssdk10.jam." ;
+}
+
+# uncomment this to use a specific version:
+# WINSDK_VER = 10.0.22621.0 ;
+
+# not set try to find a version
+if ! $(WINSDK_VER) 
+{
+    local versions = [ Glob $(WINSDK)\\Lib\\ : * ] ;
+    versions = [ Reverse [ Exclude . .. : $(versions:BS) ] ] ;
+    if $(versions)
+    {
+
+        WINSDK_VER = $(versions[1]) ;
+        if $(VERBOSE)
+        {
+            Echo Using Windows SDK Ver: $(WINSDK_VER) ;
+        }
+    }
+}
 
 WINSDK_LIB = $(WINSDK)\\Lib\\$(WINSDK_VER) ;
 WINSDK_INC = $(WINSDK)\\Include\\$(WINSDK_VER)\\ucrt ;
+
+if ! [ Exists $(WINSDK_LIB) ]
+{
+    Echo "Microsoft SDK v10 not found at: $(WINSDK_LIB)." ;
+    Exit "Please install and/or set WINSDK to installed path in mssdk10.jam." ;
+}
+
 
 # add sdk to linker path
 LINKPATH += "$(WINSDK_LIB)\\um\\x64" "$(WINSDK_LIB)\\ucrt\\x64" ;

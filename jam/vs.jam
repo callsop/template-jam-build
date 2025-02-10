@@ -1,0 +1,86 @@
+###########################################################################################
+#
+# microsoft visual studio
+#
+
+VS = "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC" ;
+
+rule CheckVS
+{
+    local check = $(>:E=$(VS)) ;
+    if ! [ Exists $(check) ]
+    {
+        Echo "Microsoft Visual Studio $(<) not found at:" ;
+        Echo $(check) ;
+        Exit "Please install and/or set VS to path of Visual Studio MSVC directory in vs.jam." ;
+    }
+    else 
+    {
+        if $(<) && $(VERBOSE)
+        {
+            Echo Using $(<) at $(check) ;
+        }
+    }
+}
+
+CheckVS ;
+
+# uncomment this to use a specific version:
+# VS_VER = 14.42.34433 ;
+
+# not set try to find a version
+if ! $(VS_VER) 
+{
+    local versions = [ Glob $(VS)\\ : * ] ;
+    versions = [ Reverse [ Exclude . .. : $(versions:BS) ] ] ;
+    if $(versions)
+    {
+        VS_VER = $(versions[1]) ;
+        if $(VERBOSE)
+        {
+            Echo Using Visual Studio Ver: $(VS_VER) ;
+        }
+    }
+}
+
+VS = $(VS)\\$(VS_VER) ;
+
+CheckVS ;
+
+###########################################################################################
+#
+# microsoft linker defaults
+#
+
+LINK = "$(VS)\\bin\\Hostx64\\x64\\link.exe" ;
+LINKFLAGS += /nologo /subsystem:console /machine:X64 ;
+LINKPATH += "$(VS)\\lib\\x64" ;
+
+# as the library paths have spaces, use an environment variable and quote executable
+actions Link bind NEEDLIBS
+{
+    set LIBPATH= /libpath:"$(LINKPATH)"
+    "$(LINK)" /DEBUG /out:$(<) $(LINKFLAGS) $(UNDEFS) %LIBPATH% $(LINKLIBS) $(NEEDLIBS) $(>)
+}
+
+###########################################################################################
+#
+# c++ defaults
+#
+
+C++FLAGS = /nologo /FS /Gd /Zi /std:c++20 /W3 /EHsc ;
+C++FLAGS on debug = $(C++FLAGS) /MDd /Od ;
+C++FLAGS on release = $(C++FLAGS) /MD /O2 ;
+
+C++ = "$(VS)\\bin\\Hostx64\\x64\\cl.exe" ;
+INCLUDE += $(VS)\\include ;
+ 
+# as the include paths have spaces, use an environment variable and quote executable
+actions C++
+{
+    set INCL= /I"$(INCLUDE)"
+    "$(C++)" /c /Fo$(<) /Fd$(<:S=.pdb) $(C++FLAGS) %INCL% $(CCDEFS) $(CCHDRS) $(>)
+}
+
+CheckVS cl.exe : $(C++) ;
+CheckVS link.exe : $(LINK) ;
